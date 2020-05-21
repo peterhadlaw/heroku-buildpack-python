@@ -59,6 +59,10 @@ if [ ! "$SKIP_PIPENV_INSTALL" ]; then
         # to latest if only --upgrade is specified. Specify upgrade strategy to
         # avoid this eager behavior.
         /app/.heroku/python/bin/pip install pipenv==$PIPENV_VERSION --upgrade --upgrade-strategy only-if-needed &> /dev/null
+        
+        
+        puts-step "Forcing upgrade of pip..."
+        /app/.heroku/python/bin/pip install --upgrade pip 2>&1 | indent
 
         # Install the test dependencies, for CI.
         if [ "$INSTALL_TEST" ]; then
@@ -67,8 +71,6 @@ if [ ! "$SKIP_PIPENV_INSTALL" ]; then
 
         # Install the dependencies.
         elif [[ ! -f Pipfile.lock ]]; then
-            puts-step "Forcing upgrade of pip..."
-            /app/.heroku/python/bin/pip install --upgrade pip 2>&1 | indent
             puts-step "Installing dependencies with Pipenv $PIPENV_VERSION…"
             /app/.heroku/python/bin/pipenv install --system --skip-lock 2>&1 | indent
 
